@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.graphicsLayer
 import coil.compose.AsyncImage
 import com.example.farmacia.model.Medicamento
 
@@ -98,6 +99,31 @@ fun MedicationDetailScreen(
                 DetailSection(title = "Especificación", content = medicamento.especificacion)
                 DetailSection(title = "Para qué sirve", content = medicamento.paraQueSirve)
                 DetailSection(title = "Dosis", content = medicamento.dosis)
+                
+                if (medicamento.grupoFarmacologico.isNotEmpty()) {
+                    DetailSection(title = "Grupo farmacológico", content = medicamento.grupoFarmacologico)
+                }
+                if (medicamento.conQueNoCombinar.isNotEmpty()) {
+                    DetailSection(title = "Con qué no combinar", content = medicamento.conQueNoCombinar)
+                }
+                if (medicamento.comoDesechar.isNotEmpty()) {
+                    DetailSection(title = "Cómo desechar", content = medicamento.comoDesechar)
+                }
+                
+                medicamento.efectosSecundarios?.let {
+                    if (it.isNotEmpty()) DetailSection(title = "Efectos secundarios", content = it)
+                }
+                medicamento.precauciones?.let {
+                    if (it.isNotEmpty()) DetailSection(title = "Precauciones", content = it)
+                }
+                
+                if (medicamento.datoExtra.isNotEmpty()) {
+                    DetailSection(title = "Dato extra", content = medicamento.datoExtra)
+                }
+                
+                medicamento.importante?.let {
+                    if (it.isNotEmpty()) DetailSection(title = "Importante", content = it)
+                }
             }
         }
     }
