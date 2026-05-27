@@ -1,7 +1,7 @@
-# Propuesta de Proyecto Profesional: MyFarm
+# Propuesta de Proyecto Profesional: MyPharm
 
 ## 1. Análisis del Producto (MVP)
-**MyFarm** es una enciclopedia farmacéutica digital diseñada para ofrecer información técnica precisa y accesible. El proyecto destaca por:
+**MyPharm** es una enciclopedia farmacéutica digital diseñada para ofrecer información técnica precisa y accesible. El proyecto destaca por:
 
 *   **Arquitectura Escalable:** Separación de capas para un mantenimiento sencillo.
 *   **Gestión Dinámica:** Carga de imágenes desde repositorios remotos para optimizar el peso de la app.
@@ -29,4 +29,4 @@ Para la entrega de una aplicación completa con las 20 categorías funcionales, 
 *   **Semana 5:** QA, depuración y entrega de APK.
 
 ## 4. Recomendación Estratégica
-MyFarm está diseñada para ser escalable. Su arquitectura permite integrar a futuro módulos de geolocalización de farmacias o sistemas de recordatorio de dosis (alarmas), aumentando su valor comercial.
+MyPharm está diseñada para ser escalable. Su arquitectura permite integrar a futuro módulos de geolocalización de farmacias o sistemas de recordatorio de dosis (alarmas), aumentando su valor comercial.

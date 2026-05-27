@@ -27,7 +27,14 @@ enum class AppDestinations(
     HIPERTIROIDISMO("Hipertiroidismo", Icons.Default.List),
     HIPOGLICEMIANTES("Hipoglicemiantes", Icons.Default.List),
     HIPOLIPEMIANTES("Hipolipemiantes", Icons.Default.List),
-    HIPOTIROIDISMO("Hipotiroidismo", Icons.Default.List),
+    HIPOTIROIDISMO("Hipertiroidismo", Icons.Default.List),
     INDUCTORES_SUENO("Inductores del sueño", Icons.Default.List),
     NEUROLEPTICOS("Neurolépticos", Icons.Default.List),
+    
+    // Nuevas categorías usadas en el repositorio
+    ANTIALERGICOS("Antialérgicos", Icons.Default.List),
+    ANTIDIABETICOS("Antidiabéticos", Icons.Default.List),
+    CORTICOIDES("Corticoides", Icons.Default.List),
+    DERMATOLOGICOS("Dermatológicos", Icons.Default.List),
+    GASTROINTESTINALES("Gastrointestinales", Icons.Default.List)
 }

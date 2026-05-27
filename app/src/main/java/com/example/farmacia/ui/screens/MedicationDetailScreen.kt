@@ -1,20 +1,32 @@
 package com.example.farmacia.ui.screens
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -23,7 +35,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,19 +48,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.graphicsLayer
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.example.farmacia.model.Medicamento
+import com.example.farmacia.ui.components.SelectorButton
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun MedicationDetailScreen(
-    medicamento: Medicamento,
+    inicial: Medicamento,
+    variantes: List<Medicamento>,
     onBack: () -> Unit
 ) {
+    var currentIndex by remember { 
+        mutableIntStateOf(variantes.indexOfFirst { it.id == inicial.id }.coerceAtLeast(0)) 
+    }
+    val medicamento = variantes[currentIndex]
+    val tieneVariantes = variantes.size > 1
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 title = { Text(medicamento.nombre) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -64,29 +93,71 @@ fun MedicationDetailScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Imagen del Medicamento
-            Surface(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.5f)
-                    .clip(RoundedCornerShape(12.dp)),
-                color = Color(0xFFF0F0F0)
+                    .clip(RoundedCornerShape(12.dp))
             ) {
-                Box(contentAlignment = Alignment.Center) {
-                    if (medicamento.imagenUrl != null) {
-                        // Carga de imagen desde URL para el detalle
-                        AsyncImage(
-                            model = medicamento.imagenUrl,
-                            contentDescription = "Imagen de ${medicamento.nombre}",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Fit
+                AnimatedContent(
+                    targetState = medicamento.imagenUrl,
+                    transitionSpec = { fadeIn() with fadeOut() },
+                    label = "ImageTransition"
+                ) { targetUrl ->
+                    SubcomposeAsyncImage(
+                        model = targetUrl,
+                        contentDescription = "Imagen de ${medicamento.nombre}",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit,
+                        loading = {
+                            Box(contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(modifier = Modifier.size(40.dp))
+                            }
+                        },
+                        error = {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxSize().padding(16.dp)
+                            ) {
+                                Icon(Icons.Default.Info, null, modifier = Modifier.size(48.dp), tint = Color.LightGray)
+                                Text("Imagen en proceso", style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                    )
+                }
+
+                if (tieneVariantes) {
+                    Row(
+                        modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SelectorButton(
+                            icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            onClick = {
+                                currentIndex = if (currentIndex > 0) currentIndex - 1 else variantes.size - 1
+                            }
                         )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(0.4f),
-                            tint = Color.LightGray
+                        SelectorButton(
+                            icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            onClick = {
+                                currentIndex = (currentIndex + 1) % variantes.size
+                            }
+                        )
+                    }
+                    
+                    Surface(
+                        modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = CircleShape
+                    ) {
+                        Text(
+                            text = "${currentIndex + 1} / ${variantes.size}",
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
@@ -94,35 +165,18 @@ fun MedicationDetailScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Ficha Técnica
             Column(modifier = Modifier.fillMaxWidth()) {
-                DetailSection(title = "Especificación", content = medicamento.especificacion)
+                DetailSection(title = "Principio Activo", content = medicamento.principioActivo)
+                DetailSection(title = "Familia farmacológica", content = medicamento.familiaFarmacologica)
                 DetailSection(title = "Para qué sirve", content = medicamento.paraQueSirve)
                 DetailSection(title = "Dosis", content = medicamento.dosis)
-                
-                if (medicamento.grupoFarmacologico.isNotEmpty()) {
-                    DetailSection(title = "Grupo farmacológico", content = medicamento.grupoFarmacologico)
-                }
-                if (medicamento.conQueNoCombinar.isNotEmpty()) {
-                    DetailSection(title = "Con qué no combinar", content = medicamento.conQueNoCombinar)
-                }
-                if (medicamento.comoDesechar.isNotEmpty()) {
-                    DetailSection(title = "Cómo desechar", content = medicamento.comoDesechar)
-                }
-                
-                medicamento.efectosSecundarios?.let {
-                    if (it.isNotEmpty()) DetailSection(title = "Efectos secundarios", content = it)
-                }
-                medicamento.precauciones?.let {
-                    if (it.isNotEmpty()) DetailSection(title = "Precauciones", content = it)
-                }
+                DetailSection(title = "Contraindicaciones", content = medicamento.contraindicaciones)
+                DetailSection(title = "Con qué no combinar", content = medicamento.conQueNoCombinar)
+                DetailSection(title = "Efectos secundarios", content = medicamento.efectosSecundarios ?: "")
+                DetailSection(title = "Cómo desechar correctamente", content = medicamento.comoDesechar)
                 
                 if (medicamento.datoExtra.isNotEmpty()) {
-                    DetailSection(title = "Dato extra", content = medicamento.datoExtra)
-                }
-                
-                medicamento.importante?.let {
-                    if (it.isNotEmpty()) DetailSection(title = "Importante", content = it)
+                    DetailSection(title = "Dato clave", content = medicamento.datoExtra)
                 }
             }
         }
@@ -131,6 +185,7 @@ fun MedicationDetailScreen(
 
 @Composable
 fun DetailSection(title: String, content: String) {
+    if (content.isEmpty()) return
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Text(
             text = title,
@@ -144,6 +199,6 @@ fun DetailSection(title: String, content: String) {
             modifier = Modifier.padding(top = 4.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
+        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
     }
 }
