@@ -26,7 +26,8 @@ object MedicamentoRepository {
         AnticoagulantesDataSource.getMedicamentos(::getUrl) +
         DermatologicosDataSource.getMedicamentos(::getUrl) +
         CorticoidesDataSource.getMedicamentos(::getUrl) +
-        GastrointestinalesDataSource.getMedicamentos(::getUrl)
+        GastrointestinalesDataSource.getMedicamentos(::getUrl) +
+        AnalgesicosDataSource.getMedicamentos(::getUrl)
 
     // Agrupamos por categoría para mejorar el rendimiento de búsqueda
     private val medicamentosPorCategoria: Map<AppDestinations, List<Medicamento>> by lazy {
