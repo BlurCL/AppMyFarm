@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,7 +25,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -53,12 +50,14 @@ fun FarmacoCard(
     variantes: List<Medicamento>,
     onClick: (Medicamento) -> Unit
 ) {
-    // Si no hay variantes (caso de error), no dibujamos nada
     if (variantes.isEmpty()) return
 
-    // Estado para saber cuál variante de la lista estamos mostrando
-    var currentIndex by remember { mutableIntStateOf(0) }
-    val medicamentoActual = variantes[currentIndex]
+    // FIX: El currentIndex ahora se reinicia si la lista de variantes cambia
+    var currentIndex by remember(variantes) { mutableIntStateOf(0) }
+    
+    // Aseguramos que el índice nunca se pase del tamaño actual (doble seguridad)
+    val safeIndex = currentIndex.coerceIn(0, variantes.size - 1)
+    val medicamentoActual = variantes[safeIndex]
     val tieneVariantes = variantes.size > 1
 
     Card(
@@ -70,14 +69,12 @@ fun FarmacoCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Sección Superior: Imagen y Selectores
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.8f)
                     .background(Color.White)
             ) {
-                // Imagen con transición suave al cambiar
                 AnimatedContent(
                     targetState = medicamentoActual.imagenUrl,
                     transitionSpec = { fadeIn() with fadeOut() },
@@ -102,7 +99,6 @@ fun FarmacoCard(
                     }
                 }
 
-                // Flechas de selección (solo si hay más de una variante)
                 if (tieneVariantes) {
                     Row(
                         modifier = Modifier
@@ -111,7 +107,6 @@ fun FarmacoCard(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Flecha Izquierda
                         SelectorButton(
                             icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             onClick = {
@@ -119,7 +114,6 @@ fun FarmacoCard(
                             }
                         )
 
-                        // Flecha Derecha
                         SelectorButton(
                             icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             onClick = {
@@ -128,7 +122,6 @@ fun FarmacoCard(
                         )
                     }
 
-                    // Indicador de cantidad (ej: 1/3)
                     Surface(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
@@ -137,7 +130,7 @@ fun FarmacoCard(
                         shape = CircleShape
                     ) {
                         Text(
-                            text = "${currentIndex + 1}/${variantes.size}",
+                            text = "${safeIndex + 1}/${variantes.size}",
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.White,
@@ -147,7 +140,6 @@ fun FarmacoCard(
                 }
             }
 
-            // Sección Inferior: Información Dinámica
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

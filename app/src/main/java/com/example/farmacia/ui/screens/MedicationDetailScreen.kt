@@ -4,7 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -101,7 +101,7 @@ fun MedicationDetailScreen(
             ) {
                 AnimatedContent(
                     targetState = medicamento.imagenUrl,
-                    transitionSpec = { fadeIn() with fadeOut() },
+                    transitionSpec = { fadeIn() togetherWith fadeOut() },
                     label = "ImageTransition"
                 ) { targetUrl ->
                     SubcomposeAsyncImage(

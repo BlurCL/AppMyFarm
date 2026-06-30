@@ -266,9 +266,9 @@ fun FarmaciaApp() {
                             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            val comprimidos = gruposMedicamentos.filter { it.first().formaFarmaceutica == FormaFarmaceutica.COMPRIMIDO_CAPSULA }
-                            val jarabes = gruposMedicamentos.filter { it.first().formaFarmaceutica == FormaFarmaceutica.JARABE_SUSPENSION }
-                            val otros = gruposMedicamentos.filter { it.first().formaFarmaceutica != FormaFarmaceutica.COMPRIMIDO_CAPSULA && it.first().formaFarmaceutica != FormaFarmaceutica.JARABE_SUSPENSION }
+                            val comprimidos = gruposMedicamentos.filter { it.isNotEmpty() && it.first().formaFarmaceutica == FormaFarmaceutica.COMPRIMIDO_CAPSULA }
+                            val jarabes = gruposMedicamentos.filter { it.isNotEmpty() && it.first().formaFarmaceutica == FormaFarmaceutica.JARABE_SUSPENSION }
+                            val otros = gruposMedicamentos.filter { it.isNotEmpty() && it.first().formaFarmaceutica != FormaFarmaceutica.COMPRIMIDO_CAPSULA && it.first().formaFarmaceutica != FormaFarmaceutica.JARABE_SUSPENSION }
 
                             if (comprimidos.isNotEmpty()) {
                                 item { SectionHeader("Comprimidos y Cápsulas") }
