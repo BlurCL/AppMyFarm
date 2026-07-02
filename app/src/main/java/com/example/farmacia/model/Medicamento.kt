@@ -18,6 +18,7 @@ data class Medicamento(
     val categoria: AppDestinations,
     val formaFarmaceutica: FormaFarmaceutica,
     val esAINE: Boolean = false,
+    val esEstrechoMargen: Boolean = false,
     val imagenUrl: String? = null,
     val dosis: String = "",
     val familiaFarmacologica: String = "",
@@ -27,5 +28,6 @@ data class Medicamento(
     val comoDesechar: String = "",
     val especificacion: String = "", 
     val efectosSecundarios: String? = null,
+    val tipoReceta: String? = null,
     val datoExtra: String = ""
 )

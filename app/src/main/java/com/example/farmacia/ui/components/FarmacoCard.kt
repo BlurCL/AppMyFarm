@@ -52,10 +52,8 @@ fun FarmacoCard(
 ) {
     if (variantes.isEmpty()) return
 
-    // FIX: El currentIndex ahora se reinicia si la lista de variantes cambia
     var currentIndex by remember(variantes) { mutableIntStateOf(0) }
     
-    // Aseguramos que el índice nunca se pase del tamaño actual (doble seguridad)
     val safeIndex = currentIndex.coerceIn(0, variantes.size - 1)
     val medicamentoActual = variantes[safeIndex]
     val tieneVariantes = variantes.size > 1
@@ -64,9 +62,11 @@ fun FarmacoCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick(medicamentoActual) },
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFB5D3DB) 
+        ),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Box(
@@ -154,19 +154,49 @@ fun FarmacoCard(
                     textAlign = TextAlign.Center
                 )
                 
-                if (medicamentoActual.especificacion.isNotEmpty()) {
-                    Surface(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = RoundedCornerShape(4.dp),
-                        modifier = Modifier.padding(top = 4.dp)
-                    ) {
-                        Text(
-                            text = medicamentoActual.especificacion,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            fontSize = 11.sp
-                        )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
+                ) {
+                    if (medicamentoActual.especificacion.isNotEmpty()) {
+                        Surface(
+                            color = Color.White.copy(alpha = 0.6f),
+                            shape = RoundedCornerShape(4.dp),
+                            modifier = Modifier.padding(end = 6.dp)
+                        ) {
+                            Text(
+                                text = medicamentoActual.especificacion,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color(0xFF2E5A69),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    medicamentoActual.tipoReceta?.let { receta ->
+                        val esRetenida = receta.contains("retenida", ignoreCase = true)
+                        Surface(
+                            color = if (esRetenida) 
+                                Color(0xFFFFEBEE) 
+                            else 
+                                Color.White.copy(alpha = 0.6f), // Ahora usa el mismo fondo
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = if (esRetenida) "R. Retenida" else "C/ Receta",
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (esRetenida) 
+                                    Color.Red.copy(alpha = 0.8f) 
+                                else 
+                                    Color(0xFF2E5A69), // Ahora usa el mismo azul petróleo
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }

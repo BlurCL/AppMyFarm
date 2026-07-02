@@ -23,7 +23,16 @@ object MedicamentoRepository {
         AnalgesicosDataSource.getMedicamentos(::getUrl) +
         AntiepilepticosDataSource.getMedicamentos(::getUrl) +
         RelajantesMuscularesDataSource.getMedicamentos(::getUrl) +
-        AntipireticosDataSource.getMedicamentos(::getUrl)
+        AntipireticosDataSource.getMedicamentos(::getUrl) +
+        // Nuevas categorías agregadas
+        AntiparasitariosDataSource.getMedicamentos(::getUrl) +
+        HipolipemiantesDataSource.getMedicamentos(::getUrl) +
+        RespiratoriosDataSource.getMedicamentos(::getUrl) +
+        PsicotropicosDataSource.getMedicamentos(::getUrl) +
+        HormonasDataSource.getMedicamentos(::getUrl) +
+        AntihipertensivosDataSource.getMedicamentos(::getUrl) +
+        AntiviralesDataSource.getMedicamentos(::getUrl) +
+        AntipsicoticosDataSource.getMedicamentos(::getUrl)
 
     private val medicamentosPorCategoria: Map<AppDestinations, List<Medicamento>> by lazy {
         medicamentos.groupBy { it.categoria }

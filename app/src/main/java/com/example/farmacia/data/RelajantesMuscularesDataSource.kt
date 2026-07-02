@@ -19,6 +19,7 @@ object RelajantesMuscularesDataSource {
                 paraQueSirve = "Alivio de espasmos musculares asociados a afecciones agudas y dolorosas del sistema musculoesquelético.",
                 contraindicaciones = "Hipersensibilidad, fase aguda post-infarto de miocardio, arritmias.",
                 conQueNoCombinar = "Inhibidores de la MAO, alcohol, otros depresores del SNC.",
+                tipoReceta = "Se necesita receta médica",
                 comoDesechar = "Contenedor de medicamentos vencidos en farmacia"
             ),
             Medicamento(
@@ -33,6 +34,7 @@ object RelajantesMuscularesDataSource {
                 paraQueSirve = "Tratamiento adyuvante de contracturas musculares dolorosas en patología espinal aguda.",
                 contraindicaciones = "Embarazo, lactancia, hipersensibilidad.",
                 conQueNoCombinar = "Otros relajantes musculares.",
+                tipoReceta = "Se necesita receta médica",
                 comoDesechar = "Contenedor de medicamentos vencidos en farmacia"
             )
         )

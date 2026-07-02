@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import com.example.farmacia.model.Medicamento
 import com.example.farmacia.ui.components.SelectorButton
@@ -163,9 +165,92 @@ fun MedicationDetailScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Nueva etiqueta de especificación unificada (ej: Comprimido)
+            if (medicamento.especificacion.isNotEmpty()) {
+                Surface(
+                    color = Color.White.copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(6.dp),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) {
+                    Text(
+                        text = medicamento.especificacion,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Color(0xFF2E5A69),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
             Column(modifier = Modifier.fillMaxWidth()) {
+                // 1. Aviso de receta (AHORA PRIMERO)
+                medicamento.tipoReceta?.let { receta ->
+                    val esRetenida = receta.contains("retenida", ignoreCase = true)
+                    Surface(
+                        color = if (esRetenida) 
+                            MaterialTheme.colorScheme.errorContainer 
+                        else 
+                            Color.White.copy(alpha = 0.6f),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = if (esRetenida) Icons.Default.Warning else Icons.Default.Info,
+                                contentDescription = null,
+                                tint = if (esRetenida)
+                                    MaterialTheme.colorScheme.error
+                                else
+                                    Color(0xFF2E5A69)
+                            )
+                            Spacer(modifier = Modifier.size(12.dp))
+                            Text(
+                                text = receta,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = if (esRetenida)
+                                    MaterialTheme.colorScheme.error
+                                else
+                                    Color(0xFF2E5A69)
+                            )
+                        }
+                    }
+                }
+
+                // 2. Alerta de margen terapéutico (AHORA SEGUNDO)
+                if (medicamento.esEstrechoMargen) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Warning,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                            Spacer(modifier = Modifier.size(12.dp))
+                            Text(
+                                text = "El consumo excesivo aumenta el riesgo de intoxicación",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 DetailSection(title = "Principio Activo", content = medicamento.principioActivo)
                 DetailSection(title = "Familia farmacológica", content = medicamento.familiaFarmacologica)
                 DetailSection(title = "Para qué sirve", content = medicamento.paraQueSirve)
